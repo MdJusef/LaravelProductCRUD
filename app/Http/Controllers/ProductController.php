@@ -51,7 +51,21 @@ class ProductController extends Controller
             'product'=>Product::find($id)
         ]);
     }
-    public function updateProduct(){
-        //
+    public function updateProduct(Request $request){
+        $this->product = Product::find($request->product_id);
+
+        $this->product->product_name = $request->product_name;
+        $this->product->product_category = $request->product_category;
+        $this->product->product_quantity = $request->product_quantity;
+        $this->product->product_price = $request->product_price;
+        $this->product->product_des = $request->product_des;
+        if($request->file('product_image')){
+            if($this->product->product_image){
+                unlink($this->product->product_image);
+            }
+            $this->product->product_image = $this->saveImage($request);
+        }
+        $this->product->save();
+        return redirect('show-product')->with('message','success');
     }
 }
